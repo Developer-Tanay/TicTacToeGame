@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: #3d7153;
+        text-align: center;
+      }
+
+      .container {
+        height: 70vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .game {
+        height: 60vmin;
+        width: 60vmin;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 1.5vmin;
+      }
+
+      .box {
+        height: 18vmin;
+        width: 18vmin;
+        border-radius: 16px;
+        border: none;
+        box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.5);
+        font-size: 9vmin;
+        background-color: white;
+        color: #b0413e;
+        font-weight: bold;
+        background-color: #ffffc7;
+        cursor: pointer;
+      }
+
+      #resetBtn {
+        padding: 16px;
+        background-color: black;
+        color: white;
+        font-weight: bold;
+        border-radius: 18px;
+        border: none;
+        box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.5);
+        cursor: pointer;
+      }
+
+      .newGame {
+        padding: 16px;
+        background-color: black;
+        color: white;
+        font-weight: bold;
+        border-radius: 18px;
+        border: none;
+        box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.5);
+        cursor: pointer;
+      }
+
+      .msgContainer {
+        height: 100vmin;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 34px;
+      }
+
+      #msg {
+        font-size: 8vmin;
+        color: #ffffc7;
+      }
+
+      .hide {
+        display: none;
+      }
+
+      footer {
+        position: sticky;
+        background-color: #333;
+        color: white;
+        padding: 8px;
+        font-size: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="msgContainer hide">
+        <p id="msg">Winner</p>
+        <button class="newGame">New Game</button>
+      </div>
+      <h1>Tic-Tac-Toe</h1>
+      <div class="container">
+        <div class="game">
+          <button class="box"></button>
+          <button class="box"></button>
+          <button class="box"></button>
+          <button class="box"></button>
+          <button class="box"></button>
+          <button class="box"></button>
+          <button class="box"></button>
+          <button class="box"></button>
+          <button class="box"></button>
+        </div>
+      </div>
+      <button id="resetBtn">Reset Game</button>
+    </main>
+
+    <footer>
+        Copyright © 2024 Tic-Tac-Toe. All Rights Reserved.
+        <br />
+        Owner: @TanayPaul
+      </footer>
+  </body>
+
+  <script>
+    let boxes = document.querySelectorAll(".box");
+    let resetBtn = document.querySelector("#resetBtn");
+    let msgContainer = document.querySelector(".msgContainer");
+    let msg = document.querySelector("#msg");
+    let newGameBtn = document.querySelector(".newGame");
+
+    let turnO = true;
+    const winPatterns = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+
+    const resetGame = () => {
+      turnO = true;
+      enableBoxes();
+      msgContainer.classList.add("hide");
+    };
+
+    const newGame = () => {
+      turnO = true;
+      enableBoxes();
+      msgContainer.classList.add("hide");
+    };
+
+    boxes.forEach((box) => {
+      box.addEventListener("click", () => {
+        if (turnO) {
+          box.innerText = "0";
+          turnO = false;
+        } else {
+          box.innerText = "X";
+          turnO = true;
+        }
+        box.disabled = true;
+        checkWinner();
+        if (!turnO) {
+          // Computer's turn (random move)
+          setTimeout(makeRandomMove, 500); // Add a delay for fun
+        }
+      });
+    });
+
+    const disableBoxes = () => {
+      for (const box of boxes) {
+        box.disabled = true;
+      }
+    };
+
+    const enableBoxes = () => {
+      for (const box of boxes) {
+        box.disabled = false;
+        box.innerText = "";
+      }
+    };
+
+    const showWinner = (winner) => {
+      msg.innerText = `Congratulations, The Winner is ${winner}`;
+      msgContainer.classList.remove("hide");
+      disableBoxes();
+    };
+
+    const checkWinner = () => {
+      for (const pattern of winPatterns) {
+        let pos1Val = boxes[pattern[0]].innerText;
+        let pos2Val = boxes[pattern[1]].innerText;
+        let pos3Val = boxes[pattern[2]].innerText;
+
+        if (pos1Val && pos1Val === pos2Val && pos2Val === pos3Val) {
+          showWinner(pos1Val);
+        }
+      }
+    };
+
+    const makeRandomMove = () => {
+      const emptyCells = Array.from(boxes).filter((box) => !box.innerText);
+      if (emptyCells.length > 0) {
+        const randomIndex = Math.floor(Math.random() * emptyCells.length);
+        emptyCells[randomIndex].innerText = "X"; // Computer's marker
+        emptyCells[randomIndex].disabled = true;
+        turnO = true;
+        checkWinner();
+      }
+    };
+
+    resetBtn.addEventListener("click", resetGame);
+    newGameBtn.addEventListener("click", newGame);
+  </script>
+</html>
