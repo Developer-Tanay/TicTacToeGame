@@ -1,1 +1,2 @@
 # TicTacToeGame
+Author: Tanay Paul
